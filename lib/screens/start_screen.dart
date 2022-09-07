@@ -1,3 +1,4 @@
+import 'package:em_home/auth/auth_gate.dart';
 import 'package:em_home/screens/login_screen.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/utils/custom_route.dart';
@@ -21,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigatetohome() async {
     await Future.delayed(const Duration(milliseconds: 3500), () {});
     Navigator.pushReplacement(
-        context, CustomRoute(widget: const LoginScreen()));
+        context, CustomRoute(widget: const AuthGate()));
   }
 
   @override

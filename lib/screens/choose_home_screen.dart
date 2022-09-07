@@ -18,7 +18,7 @@ class ChooseHomeScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(context, CustomRoute(widget: JoinHomeScreen()));
+                  Navigator.push(context, CustomRoute(widget: JoinHomeScreen()));
                 },
                 child: Container(
                     width: double.infinity,
@@ -43,7 +43,7 @@ class ChooseHomeScreen extends StatelessWidget {
 
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(context, SlideLeftRoute(widget: const CreateHomeScreen()));
+                  Navigator.push(context, SlideLeftRoute(widget: const CreateHomeScreen()));
                 },
                 child: Container(
                   width: double.infinity,

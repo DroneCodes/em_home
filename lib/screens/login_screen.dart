@@ -3,8 +3,11 @@ import 'package:em_home/screens/register_screen.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:em_home/widgets/text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,7 +19,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,8 +27,55 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordController.dispose();
   }
 
+  void loginUser() async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
+
+  // Sign in user with google
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  // sign in with facebook... would be added soon
+  //
+  // Future<UserCredential> signInWithFacebook() async {
+  //   // Trigger the sign-in flow
+  //   final LoginResult loginResult = await FacebookAuth.instance.login();
+  //
+  //   // Create a credential from the access token
+  //   final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken.token);
+  //
+  //   // Once signed in, return the UserCredential
+  //   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  // }
+
   void navigatetoSignUp() {
-    Navigator.pushReplacement(context, SlideLeftRoute(widget: const RegisterScreen()));
+    Navigator.pushReplacement(
+        context, SlideLeftRoute(widget: const RegisterScreen()));
   }
 
   @override
@@ -62,14 +111,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 textInputType: TextInputType.text,
                 isPass: true,
               ),
-
               const SizedBox(
                 height: 20,
               ),
-
               InkWell(
                 onTap: () {
-                  Navigator.pushReplacement(context, CustomRoute(widget: const ChooseHomeScreen()));
+                  Navigator.pushReplacement(
+                      context, CustomRoute(widget: const ChooseHomeScreen()));
+                  loginUser();
                 },
                 child: Container(
                     width: double.infinity,
@@ -87,25 +136,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: buttonTextColor, fontWeight: FontWeight.bold),
                     )),
               ),
-
               const SizedBox(
                 height: 75,
               ),
-
               Container(
                 color: backgroundColor,
                 child: const Text("- or sign in using -"),
               ),
-
               const SizedBox(
                 height: 25,
               ),
-
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    GestureDetector(
+                    InkWell(
+                      onTap: signInWithGoogle,
                       child: Container(
                         width: 50,
                         height: 45,
@@ -116,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(
                       width: 30,
                     ),
-                    GestureDetector(
+                    InkWell(
                       child: Container(
                         width: 50,
                         height: 45,
@@ -127,11 +173,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(
                 height: 60,
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

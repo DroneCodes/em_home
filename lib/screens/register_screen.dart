@@ -2,6 +2,7 @@ import 'package:em_home/screens/choose_home_screen.dart';
 import 'package:em_home/screens/login_screen.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:em_home/widgets/text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
@@ -16,7 +17,6 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -24,6 +24,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     emailController.dispose();
     passwordController.dispose();
   }
+
+  void registerUser() async {
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
 
   void navigatetoSignIn() {
     Navigator.of(context)
@@ -38,7 +56,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.only(top: 20),
               alignment: Alignment.topLeft,
               child: IconButton(
                 onPressed: () {
@@ -92,6 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   InkWell(
                     onTap: () {
+                      registerUser();
                       Navigator.pushReplacement(context, CustomRoute(widget: const ChooseHomeScreen()));
                     },
                     child: Container(
@@ -111,7 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),),
                   ),
                   const SizedBox(
-                    height: 75,
+                    height: 65,
                   ),
                   Container(
                     color: backgroundColor,
