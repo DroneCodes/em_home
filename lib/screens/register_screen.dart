@@ -1,9 +1,14 @@
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:em_home/methods/methods.dart';
 import 'package:em_home/screens/choose_home_screen.dart';
 import 'package:em_home/screens/login_screen.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:em_home/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:em_home/models/user.dart' as model;
 
 import '../utils/colors.dart';
 
@@ -17,6 +22,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
 
   @override
   void dispose() {
@@ -25,12 +32,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     passwordController.dispose();
   }
 
-  void registerUser() async {
+  Future<String> registerUser() async {
     try {
       final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+
+      // String photoUrl = await Storage().uploadImage("profile pics", file);
+      model.User user = model.User(
+          uid: credential.user!.uid,
+          email: emailController.text,
+          // photoUrl: photoUrl
+      );
+      // add user to database
+
+      await firebaseFirestore.collection("users").doc(credential.user!.uid).set(user.toJson());
+
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -40,6 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } catch (e) {
       print(e);
     }
+    return "Success";
   }
 
 

@@ -31,10 +31,13 @@ dependencies:
   pin_code_fields: ^7.4.0
   firebase_core: ^1.4.0
   firebase_auth: ^3.0.0
+  firebase_storage: ^10.3.8
+  image_picker: ^0.8.4+4
   cloud_firestore: ^3.1.5
   google_sign_in: '^5.2.1'
   flutter_facebook_auth: '^4.0.1'
   provider: ^6.0.3
+  uuid: ^3.0.5
   flutter:
     sdk: flutter
 

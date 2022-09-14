@@ -1,20 +1,57 @@
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/widgets/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
-class CreateHomeScreen extends StatelessWidget {
+import '../models/user.dart';
+
+class CreateHomeScreen extends StatefulWidget {
   const CreateHomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CreateHomeScreen> createState() => _CreateHomeScreenState();
+}
+
+class _CreateHomeScreenState extends State<CreateHomeScreen> {
+
+  final TextEditingController homenameController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    homenameController.dispose();
+  }
+
+  // Future<String> uploadImageToStorage(String childName, Uint8List file) {
+  //   Reference ref = storage
+  // }
+
+  Future createHome() async{
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    String homeid = const Uuid().v1();
+    final homes = Home(
+        users: [],
+        name: homenameController.text,
+        homeid: homeid
+    );
+    await _firestore.collection("homes").doc(homeid).set(homes.toJson());
+  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CircularProgressIndicator()));
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
 
-    final TextEditingController homenameController = TextEditingController();
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Padding(
-          padding: const EdgeInsets.only(top: 70, left: 25, right: 25),
+        padding: const EdgeInsets.only(top: 70, left: 25, right: 25),
         child: Center(
           child: Column(
             children: [
@@ -25,8 +62,8 @@ class CreateHomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 "Give your Home a name",
                 style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.bold
+                    color: textColor,
+                    fontWeight: FontWeight.bold
                 ),
               ),
 
@@ -46,7 +83,7 @@ class CreateHomeScreen extends StatelessWidget {
 
 
               GestureDetector(
-                onTap: () {},
+                onTap: createHome,
                 child: Container(
                   width: double.infinity,
                   alignment: AlignmentDirectional.center,
@@ -70,3 +107,28 @@ class CreateHomeScreen extends StatelessWidget {
     );
   }
 }
+
+
+// Future<String> createHome(
+//     String uid,
+//     ) async {
+//   String res = "some error occured";
+//   try {
+//     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+//     String homeid = const Uuid().v1();
+//     Home homes = Home(
+//         users: [],
+//         uid: uid,
+//         // use the uuid package
+//         name: homenameController.text,
+//         homeid: homeid
+//     );
+//     await _firestore.collection("homes").doc(uid).set(homes.toJson());
+//     res = "success";
+//   } catch (err) {
+//     res = err.toString();
+//   }
+//   return res;
+// }
+// Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CircularProgressIndicator()));
+// }

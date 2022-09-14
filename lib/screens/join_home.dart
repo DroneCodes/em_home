@@ -12,6 +12,7 @@ class JoinHomeScreen extends StatefulWidget {
 }
 
 class _JoinHomeScreenState extends State<JoinHomeScreen> {
+
   String currentText = "";
 
   @override

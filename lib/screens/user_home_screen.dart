@@ -6,10 +6,24 @@ class UserHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Home"),
+        centerTitle: true,
+        backgroundColor: backgroundColor,
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
+        ],
+      ),
       backgroundColor: backgroundColor,
-      body: Center(
-        child: CircularProgressIndicator(),
+      body: Container(
+        child: Column(
+          children: [
+            CircleAvatar(
+              child: Image.network(""),
+            )
+          ],
+        ),
       ),
     );
   }
