@@ -1,9 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:em_home/screens/user_home_screen.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/widgets/text_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -17,37 +15,37 @@ class CreateHomeScreen extends StatefulWidget {
 }
 
 class _CreateHomeScreenState extends State<CreateHomeScreen> {
-
   final TextEditingController homenameController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     homenameController.dispose();
+    addressController.dispose();
   }
 
   // Future<String> uploadImageToStorage(String childName, Uint8List file) {
   //   Reference ref = storage
   // }
 
-  Future createHome() async{
+  Future createHome() async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     String homeid = const Uuid().v1();
     final homes = Home(
-        users: [],
-        name: homenameController.text,
-        homeid: homeid
+      users: [],
+      name: homenameController.text,
+      homeid: homeid,
+      address: addressController.text,
     );
     await _firestore.collection("homes").doc(homeid).set(homes.toJson());
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CircularProgressIndicator()));
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => const UserHomeScreen()));
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Padding(
@@ -61,27 +59,27 @@ class _CreateHomeScreenState extends State<CreateHomeScreen> {
               Text(
                 textAlign: TextAlign.center,
                 "Give your Home a name",
-                style: TextStyle(
-                    color: textColor,
-                    fontWeight: FontWeight.bold
-                ),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
               ),
-
               const SizedBox(
                 height: 35,
               ),
-
               TextFieldInput(
                 textEditingController: homenameController,
                 hintText: "Name",
                 textInputType: TextInputType.text,
               ),
-
               const SizedBox(
                 height: 50,
               ),
-
-
+              TextFieldInput(
+                textEditingController: addressController,
+                hintText: "address",
+                textInputType: TextInputType.streetAddress,
+              ),
+              const SizedBox(
+                height: 50,
+              ),
               GestureDetector(
                 onTap: createHome,
                 child: Container(
@@ -98,7 +96,8 @@ class _CreateHomeScreenState extends State<CreateHomeScreen> {
                     "Create code",
                     style: TextStyle(
                         color: buttonTextColor, fontWeight: FontWeight.bold),
-                  ),),
+                  ),
+                ),
               ),
             ],
           ),
@@ -107,28 +106,3 @@ class _CreateHomeScreenState extends State<CreateHomeScreen> {
     );
   }
 }
-
-
-// Future<String> createHome(
-//     String uid,
-//     ) async {
-//   String res = "some error occured";
-//   try {
-//     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-//     String homeid = const Uuid().v1();
-//     Home homes = Home(
-//         users: [],
-//         uid: uid,
-//         // use the uuid package
-//         name: homenameController.text,
-//         homeid: homeid
-//     );
-//     await _firestore.collection("homes").doc(uid).set(homes.toJson());
-//     res = "success";
-//   } catch (err) {
-//     res = err.toString();
-//   }
-//   return res;
-// }
-// Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CircularProgressIndicator()));
-// }
