@@ -9,7 +9,7 @@ import 'package:em_home/utils/custom_route.dart';
 import 'package:em_home/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:em_home/models/user.dart' as model;
+import 'package:em_home/models/model.dart' as model;
 import 'package:image_picker/image_picker.dart';
 
 import '../utils/colors.dart';
@@ -31,7 +31,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   bool _isLoading = false;
-  Uint8List? image;
 
   @override
   void dispose() {
@@ -45,28 +44,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isLoading = true;
     });
 
-    // function to select image
-    pickImage(ImageSource source) async {
-      final ImagePicker imagePicker = ImagePicker();
 
-      XFile? _file = await imagePicker.pickImage(source: source);
-
-      if (_file != null) {
-        return await _file.readAsBytes();
-      }
-      print("No Image selected");
-    }
-
-    void selectImage() async {
-      Uint8List? im = await pickImage(ImageSource.gallery);
-      setState(() {
-        image = im;
-      });
-    }
 
     // function to register user
     String res = await AuthMethods().registerUser(
-        email: emailController.text, password: passwordController.text, file: image!);
+        email: emailController.text, password: passwordController.text);
     setState(() {
       _isLoading = false;
     });
@@ -90,6 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: backgroundColor,
         body: Container(
             color: backgroundColor,
+            padding: const EdgeInsets.only(top: 30),
             width: double.infinity,
             child: Column(
               children: [

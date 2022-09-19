@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:em_home/screens/user_home_screen.dart';
+import 'package:em_home/screens/user_profile.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-import '../models/user.dart';
+import '../models/model.dart';
 
 class CreateHomeScreen extends StatefulWidget {
   const CreateHomeScreen({Key? key}) : super(key: key);
@@ -26,9 +26,7 @@ class _CreateHomeScreenState extends State<CreateHomeScreen> {
     addressController.dispose();
   }
 
-  // Future<String> uploadImageToStorage(String childName, Uint8List file) {
-  //   Reference ref = storage
-  // }
+
 
   Future createHome() async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -93,7 +91,7 @@ class _CreateHomeScreenState extends State<CreateHomeScreen> {
                     color: buttonColor,
                   ),
                   child: const Text(
-                    "Create code",
+                    "Create Home",
                     style: TextStyle(
                         color: buttonTextColor, fontWeight: FontWeight.bold),
                   ),

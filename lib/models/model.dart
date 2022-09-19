@@ -4,21 +4,11 @@ class User {
   final String uid;
   final String email;
   final String password;
-  // final String dateOfBirth;
-  // final String phoneNumber;
-  final String profilePhoto;
-  // final String gender;
-  // final String status;
 
   User({
     required this.uid,
     required this.email,
     required this.password,
-    // required this.dateOfBirth,
-    // required this.phoneNumber,
-    required this.profilePhoto,
-    // required this.gender,
-    // required this.status,
   });
 
   // adding functions to user so we can easily access from firebase
@@ -28,11 +18,6 @@ class User {
         "uid": uid,
         "email": email,
         "password": password,
-        // "dateOfBirth": dateOfBirth,
-        // "phoneNumber": phoneNumber,
-        "profilePhoto": profilePhoto,
-        // "gender": gender,
-        // "status": status,
       };
 
   // create a function that takes a document snapshot and return a data model
@@ -43,11 +28,6 @@ class User {
       uid: snapshot["uid"],
       email: snapshot["email"],
       password: snapshot["password"],
-      // dateOfBirth: snapshot["dateOfBirth"],
-      // phoneNumber: snapshot["phoneNumber"],
-      profilePhoto: snapshot["profilePhoto"],
-      // gender: snapshot["gender"],
-      // status: snapshot["status"],
     );
   }
 }
@@ -80,5 +60,38 @@ class Home {
         name: snapshot["home"],
         homeid: snapshot["homeid"],
         address: snapshot["address"]);
+  }
+}
+
+class UserProfile {
+  final String name;
+  final String birthday;
+  final String address;
+  final String photoUrl;
+
+  UserProfile({
+    required this.name,
+    required this.birthday,
+    required this.address,
+    required this.photoUrl
+  });
+
+  Map<String, dynamic> toJson() =>
+      {
+        "name": name,
+        "birthday": birthday,
+        "address": address,
+        "photoUrl": photoUrl,
+      };
+
+  static UserProfile fromSnap(DocumentSnapshot snap) {
+    var snapshot = snap.data() as Map<String, dynamic>;
+
+    return UserProfile(
+      name: snapshot["name"],
+      birthday: snapshot["birthday"],
+      address: snapshot["address"],
+      photoUrl: snapshot["photoUrl"],
+    );
   }
 }

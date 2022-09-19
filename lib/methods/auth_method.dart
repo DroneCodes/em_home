@@ -1,29 +1,34 @@
 
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:em_home/methods/methods.dart';
-import 'package:em_home/models/user.dart' as model;
+import 'package:em_home/models/model.dart' as model;
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
+  // create a function to get the user details
+
+  Future<model.User> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+
+    DocumentSnapshot snapshot = await firebaseFirestore.collection("users").doc(currentUser.uid).get();
+
+    return model.User.fromSnap(snapshot);
+  }
+
   // Function to register user
   Future<String> registerUser({
     required String email,
     required String password,
-    required Uint8List file,
   }) async {
     String res = "Some error occured";
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        String profilePhoto = await Storage().uploadImage("profile pics", file);
         model.User user =
-            model.User(uid: cred.user!.uid, email: email, password: password, profilePhoto: profilePhoto,);
+            model.User(uid: cred.user!.uid, email: email, password: password,);
         // add user to database
         await firebaseFirestore
             .collection("users")

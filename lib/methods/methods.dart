@@ -8,7 +8,7 @@ class Storage {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<String> uploadImage(String childName, Uint8List file) async {
+  Future<String> uploadImageToStorage(String childName, Uint8List file) async {
     Reference ref = storage.ref().child(childName).child(auth.currentUser!.uid);
 
     UploadTask uploadTask = ref.putData(file);
@@ -18,3 +18,5 @@ class Storage {
 
   }
 }
+
+
