@@ -1,7 +1,11 @@
 
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:em_home/methods/methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:em_home/models/model.dart' as model;
+import 'package:uuid/uuid.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -17,6 +21,7 @@ class AuthMethods {
     return model.User.fromSnap(snapshot);
   }
 
+  String userId = const Uuid().v1();
   // Function to register user
   Future<String> registerUser({
     required String email,
@@ -28,11 +33,11 @@ class AuthMethods {
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
         model.User user =
-            model.User(uid: cred.user!.uid, email: email, password: password,);
+            model.User(uid: userId, email: email, password: password,);
         // add user to database
         await firebaseFirestore
             .collection("users")
-            .doc(cred.user!.uid)
+            .doc(userId)
             .set(user.toJson());
 
         res = "success";
@@ -70,6 +75,29 @@ class AuthMethods {
 
   Future<void> signOut() async{
     _auth.signOut();
+  }
+
+
+
+  Future<void> addUserDetails(String name, String gender, String dateOfBirth,  Uint8List file) async {
+    try {
+      if(name.isNotEmpty || gender.isNotEmpty || dateOfBirth.isNotEmpty) {
+        String detailsId = const Uuid().v1();
+        String profileImage = await Storage().uploadImageToStorage("profilePics", file);
+        await firebaseFirestore.collection("users").doc(userId).collection("user details").doc(detailsId).set({
+          "name": name,
+          "dateOfBirth": dateOfBirth,
+          "gender": gender,
+          "profilePics": profileImage,
+        });
+      } else {
+        print("Fill up the required fields");
+      }
+    } catch (e) {
+      print(
+        e.toString(),
+      );
+    }
   }
 }
 

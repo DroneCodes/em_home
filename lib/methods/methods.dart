@@ -12,7 +12,7 @@ class Storage {
     Reference ref = storage.ref().child(childName).child(auth.currentUser!.uid);
 
     UploadTask uploadTask = ref.putData(file);
-    TaskSnapshot snapshot = (UploadTask) as TaskSnapshot;
+    TaskSnapshot snapshot = (await UploadTask) as TaskSnapshot;
     String downloadUrl = await snapshot.ref.getDownloadURL();
     return downloadUrl;
 

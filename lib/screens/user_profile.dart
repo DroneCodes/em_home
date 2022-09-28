@@ -1,235 +1,114 @@
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:em_home/methods/methods.dart';
-import 'package:em_home/models/model.dart';
-
 import 'package:em_home/utils/colors.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../widgets/text_field.dart';
-
-class UserHomeScreen extends StatefulWidget {
-  const UserHomeScreen({Key? key}) : super(key: key);
+class UserProfile extends StatefulWidget {
+  final String uid;
+  const UserProfile({Key? key, required this.uid}) : super(key: key);
 
   @override
-  State<UserHomeScreen> createState() => _UserHomeScreenState();
+  State<UserProfile> createState() => _UserProfileState();
 }
 
-class _UserHomeScreenState extends State<UserHomeScreen> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final TextEditingController address2Controller = TextEditingController();
-  final TextEditingController birthdayController = TextEditingController();
-  Uint8List? image;
-  bool _isLoading = false;
-
-
-  // function to select image
-  pickImage(ImageSource source) async {
-    final ImagePicker imagePicker = ImagePicker();
-
-    XFile? _file = await imagePicker.pickImage(source: source);
-
-    if (_file != null) {
-      return await _file.readAsBytes();
-    }
-    print("No Image selected");
+class _UserProfileState extends State<UserProfile> {
+  showSnackBar(String content, BuildContext context) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(content)));
   }
 
-  void selectImage() async {
-    Uint8List? im = await pickImage(ImageSource.gallery);
+  bool isLoading = false;
+  var userData = {};
+
+  getData() async {
     setState(() {
-      image = im;
+      isLoading = true;
     });
-  }
-
-
-  Future createHome(Uint8List file) async {
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    String profilePhoto = await Storage().uploadImageToStorage("profile pics", file);
-    final userprofile = UserProfile(
-        address: "${addressController.text}${address2Controller.text}", birthday: birthdayController.text, name: nameController.text, photoUrl: profilePhoto,
-
-    );
-    await _firestore.collection("user").doc().collection("UserProfile").doc().set(userprofile.toJson());
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const UserHomeScreen()));
-
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.uid)
+          .collection("user details")
+          .doc()
+          .get();
+      userData = userSnap.data()!;
+      setState(() {});
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
     setState(() {
-      _isLoading = false;
+      isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: backgroundColor2,
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "Create Profile",
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              SizedBox(
-                height: 30,
-              ),
-
-              // create a circular widget to accept a file
-
-              Stack(
+    return isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            body: Container(
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
                 children: [
-                  // to check if Image is not equal to null
-                  image != null
-                      ? CircleAvatar(
-                          radius: 64,
-                          backgroundImage: MemoryImage(image!),
-                        )
-                      : const CircleAvatar(
-                          radius: 64,
-                          backgroundImage:
-                              AssetImage("assets/facebook.png"),),
-                  Positioned(
-                    child: IconButton(
-                      onPressed: selectImage,
-                      icon: const Icon(Icons.add_a_photo),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      size: 20,
                     ),
-                    left: 80,
-                    bottom: -10,
-                  )
-                ],
-              ),
-
-              // Text Field Widgets
-
-              const SizedBox(
-                height: 25,
-              ),
-
-              Row(
-                children: [
-                  const Text(
-                    "Name:",
-                    style: TextStyle(
-                        color: textColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
-                    width: 25,
+                    height: 25,
                   ),
-                  TextFieldInput(
-                    hintText: 'Name',
-                    textInputType: TextInputType.text,
-                    textEditingController: nameController,
-                  ),
-                ],
-              ),
-
-              const SizedBox(
-                height: 20,
-              ),
-
-              Row(
-                children: [
                   const Text(
-                    "Birthday:",
+                    "My Profile",
                     style: TextStyle(
-                        color: textColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    width: 25,
-                  ),
-                  TextFieldInput(
-                    hintText: 'Birthday',
-                    textInputType: TextInputType.datetime,
-                    textEditingController: birthdayController,
-                  ),
-                ],
-              ),
-
-            const SizedBox(
-              height: 20,
-            ),
-
-            Row(
-              children: [
-                const Text(
-                  "Address:",
-                  style: TextStyle(
                       color: textColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  width: 25,
-                ),
-                Column(
-                  children: [
-                    TextFieldInput(
-                      hintText: 'Line 1',
-                      textInputType: TextInputType.streetAddress,
-                      textEditingController: addressController,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldInput(
-                      hintText: 'Line 2',
-                      textInputType: TextInputType.streetAddress,
-                      textEditingController: address2Controller,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-
-              const SizedBox(
-                height: 45,
-              ),
-
-              InkWell(
-                //onTap: createHome,
-                child: Container(
-                  width: double.infinity,
-                  alignment: AlignmentDirectional.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                    ),
-                    color: buttonColor2,
                   ),
-                  child: _isLoading
-                      ? const Center(
-                    child: CircularProgressIndicator(
-                      color: iconButtonColor,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    backgroundImage: NetworkImage(
+                      userData["profilePics"],
                     ),
+                  ),
+
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 25,
+                        child: Text(
+                          "Name",
+                          style: TextStyle(
+                              color: textColor,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+
+                      SizedBox(
+                        width: 150,
+                        child: Text(
+                          userData["name"]
+                        ),
+                      )
+                    ],
                   )
-                      : const Text(
-                    "Move in!",
-                    style: TextStyle(
-                        color: buttonTextColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }

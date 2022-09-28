@@ -1,4 +1,5 @@
 import 'package:em_home/methods/auth_method.dart';
+import 'package:em_home/screens/about_you_screen.dart';
 import 'package:em_home/screens/choose_home_screen.dart';
 import 'package:em_home/screens/register_screen.dart';
 import 'package:em_home/utils/colors.dart';
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String res = await AuthMethods().loginUser(email: emailController.text, password: passwordController.text);
 
     if (res == "success") {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ChooseHomeScreen()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const AboutYouPage()));
     } else {
       showSnackBar(res, context);
     }
@@ -97,137 +98,139 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Container(
-              color: backgroundColor,
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Flexible(
-                    flex: 2,
-                    child: Container(),
-                  ),
-                  Image.asset(
-                    'assets/logos.png',
-                  ),
-                  const Text(
-                    "Sign in to your account",
-                    style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  TextFieldInput(
-                      textEditingController: emailController,
-                      hintText: "Username or email",
-                      textInputType: TextInputType.emailAddress),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFieldInput(
-                    textEditingController: passwordController,
-                    hintText: "Password",
-                    textInputType: TextInputType.text,
-                    isPass: true,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  InkWell(
-                    onTap: signIn,
-                    child: Container(
-                        width: double.infinity,
-                        alignment: AlignmentDirectional.center,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: const ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                          ),
-                          color: buttonColor,
-                        ),
-                        child: _isLoading
-                            ? const Center(
-                          child: CircularProgressIndicator(
-                            color: iconButtonColor,
-                          ),
-                        )
-                            : const Text(
-                          "Log in",
-                          style: TextStyle(
-                              color: buttonTextColor, fontWeight: FontWeight.bold),
-                        )),
-                  ),
-                  const SizedBox(
-                    height: 75,
-                  ),
-                  Container(
-                    color: backgroundColor,
-                    child: const Text("- or sign in using -"),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: signInWithGoogle,
-                          child: Container(
-                            width: 50,
-                            height: 45,
-                            color: Colors.white,
-                            child: Image.asset('assets/google.png'),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 30,
-                        ),
-                        InkWell(
-                          child: Container(
-                            width: 50,
-                            height: 45,
-                            color: Colors.white,
-                            child: Image.asset('assets/facebook.png'),
-                          ),
-                        ),
-                      ],
+      body: SafeArea(
+        child: Container(
+                color: backgroundColor,
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: Container(),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 60,
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Container(),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: const Text("Don't have an account? "),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: navigatetoSignUp,
-                        child: Container(
-                          child: const Text(
-                            "Sign Up",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                    Image.asset(
+                      'assets/logos.png',
+                    ),
+                    const Text(
+                      "Sign in to your account",
+                      style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    TextFieldInput(
+                        textEditingController: emailController,
+                        hintText: "Username or email",
+                        textInputType: TextInputType.emailAddress),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFieldInput(
+                      textEditingController: passwordController,
+                      hintText: "Password",
+                      textInputType: TextInputType.text,
+                      isPass: true,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: signIn,
+                      child: Container(
+                          width: double.infinity,
+                          alignment: AlignmentDirectional.center,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: const ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                            ),
+                            color: buttonColor,
                           ),
+                          child: _isLoading
+                              ? const Center(
+                            child: CircularProgressIndicator(
+                              color: iconButtonColor,
+                            ),
+                          )
+                              : const Text(
+                            "Log in",
+                            style: TextStyle(
+                                color: buttonTextColor, fontWeight: FontWeight.bold),
+                          )),
+                    ),
+                    const SizedBox(
+                      height: 75,
+                    ),
+                    Container(
+                      color: backgroundColor,
+                      child: const Text("- or sign in using -"),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            onTap: signInWithGoogle,
+                            child: Container(
+                              width: 50,
+                              height: 45,
+                              color: Colors.white,
+                              child: Image.asset('assets/google.png'),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 30,
+                          ),
+                          InkWell(
+                            child: Container(
+                              width: 50,
+                              height: 45,
+                              color: Colors.white,
+                              child: Image.asset('assets/facebook.png'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 60,
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Container(),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: const Text("Don't have an account? "),
                           padding: const EdgeInsets.symmetric(
                             vertical: 8,
                           ),
                         ),
-                      )
-                    ],
-                  )
-                ],
+                        GestureDetector(
+                          onTap: navigatetoSignUp,
+                          child: Container(
+                            child: const Text(
+                              "Sign Up",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }
