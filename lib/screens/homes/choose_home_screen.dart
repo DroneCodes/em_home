@@ -1,13 +1,13 @@
-import 'package:em_home/screens/create_home.dart';
-import 'package:em_home/screens/join_home.dart';
-import 'package:em_home/screens/user_profile.dart';
+
+import 'package:em_home/screens/users/user_profile.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/model.dart';
-import '../providers/user_provider.dart';
+import '../../models/model.dart';
+import '../../providers/user_provider.dart';
+import 'create_home.dart';
 
 class ChooseHomeScreen extends StatefulWidget {
   const ChooseHomeScreen({Key? key}) : super(key: key);

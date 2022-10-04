@@ -11,7 +11,7 @@ class DrawerItem extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       child:  Container(
-        alignment: Alignment.centerLeft,
+        alignment: Alignment.centerRight,
         child: Text(
           name,
           style: const TextStyle(

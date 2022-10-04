@@ -85,7 +85,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           )
         : Scaffold(
             body: Container(
-              padding: const EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(top: 40, left: 15, right: 15),
               child: Column(
                 children: [
                   Align(

@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:em_home/models/model.dart' as model;
 import 'package:uuid/uuid.dart';
 
+import '../models/home_model.dart';
+
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -19,6 +21,12 @@ class AuthMethods {
     DocumentSnapshot snapshot = await firebaseFirestore.collection("users").doc(currentUser.uid).get();
 
     return model.User.fromSnap(snapshot);
+  }
+
+  Future<Home> getHomeDetails() async {
+    DocumentSnapshot snap = await firebaseFirestore.collection("homes").doc().get();
+
+    return Home.fromSnap(snap);
   }
 
   String userId = const Uuid().v1();

@@ -1,5 +1,5 @@
 import 'package:em_home/auth/auth_gate.dart';
-import 'package:em_home/screens/login_screen.dart';
+import 'package:em_home/screens/signing/login_screen.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:flutter/material.dart';

@@ -1,19 +1,13 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:em_home/methods/auth_method.dart';
-import 'package:em_home/methods/methods.dart';
-import 'package:em_home/screens/about_you_screen.dart';
-import 'package:em_home/screens/choose_home_screen.dart';
-import 'package:em_home/screens/login_screen.dart';
+import 'package:em_home/screens/signing/login_screen.dart';
+import 'package:em_home/screens/users/about_you_screen.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:em_home/widgets/text_field.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:em_home/models/model.dart' as model;
-import 'package:image_picker/image_picker.dart';
 
-import '../utils/colors.dart';
+import '../../utils/colors.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);

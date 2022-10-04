@@ -1,7 +1,7 @@
 import 'package:em_home/drawer/drawer_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/colors.dart';
 
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
@@ -10,106 +10,100 @@ class NavigationDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Material(
-        color: backgroundColor2,
+        color: const Color(0xFFE0F880),
         child: Column(
           children: [
             const SizedBox(
-              height: 40,
+              height: 70,
+            ),
+            const Align(
+              alignment: Alignment.topRight,
+              child: Icon(CupertinoIcons.multiply, size: 30,),
+            ),
+            const SizedBox(
+              height: 15,
             ),
             header(),
             const SizedBox(
-              height: 30,
+              height: 25,
             ),
-            const Divider(
-              thickness: 1,
-              height: 5,
-              color: buttonColor2,
+            const Align(
+              alignment: Alignment.topRight,
+              child: Text("Manage", style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20
+              ),),
             ),
             const SizedBox(
               height: 10,
             ),
+
+            const Divider(
+              thickness: 1,
+              color: Color(0xFF5AA74D),
+            ),
+
+            const SizedBox(
+              height: 10,
+            ),
+
             DrawerItem(
               name: "My Profile",
-              onPress: () => onItemPressed(context, page: 0
-              ),
+              onPress: () => onItemPressed(context, page: 0),
             ),
-            const Divider(
-              thickness: 1,
-              height: 5,
-              color: buttonColor2,
-            ),
+
             const SizedBox(
-              height: 10,
+              height: 15,
             ),
+
             DrawerItem(
-              name: "Rename Home",
-              onPress: () => onItemPressed(context, page: 1
-              ),
+              name: "Manage Home",
+              onPress: () => onItemPressed(context, page: 1),
             ),
-            const Divider(
-              thickness: 1,
-              height: 5,
-              color: buttonColor2,
-            ),
+
             const SizedBox(
-              height: 10,
-            ),
-            DrawerItem(
-              name: "Add Member",
-              onPress: () => onItemPressed(context, page: 2
-              ),
-            ),
-            const Divider(
-              thickness: 1,
-              height: 5,
-              color: buttonColor2,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            DrawerItem(
-              name: "House Rules",
-              onPress: () => onItemPressed(context, page: 3
-              ),
-            ),
-            const Divider(
-              thickness: 1,
-              height: 5,
-              color: buttonColor2,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            DrawerItem(
-              name: "Leave Home",
-              onPress: () => onItemPressed(context, page: 4
-              ),
-            ),
-            const Divider(
-              thickness: 1,
-              height: 5,
-              color: buttonColor2,
-            ),
-            const SizedBox(
-              height: 10,
+              height: 15,
             ),
             DrawerItem(
               name: "Log Out",
-              onPress: () => onItemPressed(context, page: 5
-              ),
+              onPress: () => onItemPressed(context, page: 2),
             ),
+
+            const SizedBox(
+              height: 15,
+            ),
+
             const Divider(
               thickness: 1,
-              height: 5,
-              color: buttonColor2,
+              color: Color(0xFF5AA74D),
             ),
+
             const SizedBox(
-              height: 10,
+              height: 15,
             ),
+
+            DrawerItem(
+              name: "About",
+              onPress: () => onItemPressed(context, page: 3),
+            ),
+
+            const SizedBox(
+              height: 15,
+            ),
+
+            DrawerItem(
+              name: "Share App",
+              onPress: () => onItemPressed(context, page: 4),
+            ),
+
+            const SizedBox(
+              height: 15,
+            ),
+
             DrawerItem(
               name: "Contact Us",
-              onPress: () => onItemPressed(context, page: 6
-              ),
+              onPress: () => onItemPressed(context, page: 5),
             ),
           ],
         ),
@@ -119,13 +113,15 @@ class NavigationDrawer extends StatelessWidget {
 
   Widget header() {
     return Container(
-      alignment: Alignment.centerLeft,
-      child: const Text(
-        "Menu",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 25
-        ),
+      alignment: Alignment.center,
+      child: Column(
+        children: [
+          Image.asset("assets/logos.png"),
+          const Text(
+            "EM Home",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          ),
+        ],
       ),
     );
   }
@@ -134,7 +130,6 @@ class NavigationDrawer extends StatelessWidget {
     Navigator.pop(context);
 
     switch (page) {
-
     }
   }
 }

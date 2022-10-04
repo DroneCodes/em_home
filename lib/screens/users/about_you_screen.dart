@@ -2,15 +2,12 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:em_home/methods/auth_method.dart';
-import 'package:em_home/screens/choose_home_screen.dart';
+import 'package:em_home/screens/homes/choose_home_screen.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
-import '../models/model.dart';
-import '../providers/user_provider.dart';
 
 class AboutYouPage extends StatefulWidget {
   const AboutYouPage({Key? key}) : super(key: key);

@@ -1,14 +1,12 @@
 import 'package:em_home/methods/auth_method.dart';
-import 'package:em_home/screens/about_you_screen.dart';
-import 'package:em_home/screens/choose_home_screen.dart';
-import 'package:em_home/screens/register_screen.dart';
+import 'package:em_home/screens/signing/register_screen.dart';
+import 'package:em_home/screens/users/about_you_screen.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:em_home/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
