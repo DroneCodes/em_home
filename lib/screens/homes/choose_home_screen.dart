@@ -1,14 +1,25 @@
 import 'package:em_home/screens/create_home.dart';
 import 'package:em_home/screens/join_home.dart';
+import 'package:em_home/screens/user_profile.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class ChooseHomeScreen extends StatelessWidget {
+import '../models/model.dart';
+import '../providers/user_provider.dart';
+
+class ChooseHomeScreen extends StatefulWidget {
   const ChooseHomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<ChooseHomeScreen> createState() => _ChooseHomeScreenState();
+}
+
+class _ChooseHomeScreenState extends State<ChooseHomeScreen> {
+  @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Padding(
@@ -18,7 +29,7 @@ class ChooseHomeScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context, CustomRoute(widget: const JoinHomeScreen()));
+                  Navigator.push(context, CustomRoute(widget: UserProfileScreen(uid: user.uid)));
                 },
                 child: Container(
                     width: double.infinity,

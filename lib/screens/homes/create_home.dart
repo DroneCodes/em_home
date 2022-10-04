@@ -4,6 +4,7 @@ import 'package:em_home/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/home_model.dart';
 import '../models/model.dart';
 import 'home_screen.dart';
 
