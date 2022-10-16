@@ -2,52 +2,39 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:em_home/methods/database_service.dart';
 import 'package:em_home/methods/methods.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:em_home/models/model.dart' as model;
-import 'package:uuid/uuid.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../models/home_model.dart';
+import 'helper_functions.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-  // create a function to get the user details
-
-  Future<model.User> getUserDetails() async {
-    User currentUser = _auth.currentUser!;
-
-    DocumentSnapshot snapshot = await firebaseFirestore.collection("users").doc(currentUser.uid).get();
-
-    return model.User.fromSnap(snapshot);
-  }
-
-  Future<Home> getHomeDetails() async {
-    DocumentSnapshot snap = await firebaseFirestore.collection("homes").doc().get();
-
-    return Home.fromSnap(snap);
-  }
-
-  String userId = const Uuid().v1();
   // Function to register user
-  Future<String> registerUser({
+  Future registerUser({
     required String email,
     required String password,
+    required String name,
+    required String gender,
+    required String dateOfBirth,
+    required Uint8List file
   }) async {
     String res = "Some error occured";
     try {
-      if (email.isNotEmpty || password.isNotEmpty) {
-        UserCredential cred = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        model.User user =
-            model.User(uid: userId, email: email, password: password,);
-        // add user to database
-        await firebaseFirestore
-            .collection("users")
-            .doc(userId)
-            .set(user.toJson());
+      if (email.isNotEmpty || password.isNotEmpty || name.isNotEmpty || gender.isNotEmpty || dateOfBirth.isNotEmpty || file.isNotEmpty) {
+        User user = (await _auth.createUserWithEmailAndPassword(
+            email: email, password: password)).user!;
+        String profileImage = await Storage().uploadImageToStorage("profilePics", file);
 
+        // create a new document for the user with uid
+        if (user != null) {
+          await DatabaseService(uid: user.uid).updateUserData(
+              name, email, password, gender, dateOfBirth, profileImage);
+          return true;
+        }
         res = "success";
       }
       // for error during registering
@@ -66,12 +53,14 @@ class AuthMethods {
 
 
 
-  Future<String> loginUser({required String email, required String password}) async {
+  Future loginUser({required String email, required String password}) async {
     String res = "Some error occured";
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
-        await _auth.signInWithEmailAndPassword(email: email, password: password);
-        res = "success";
+        User user = (await _auth.signInWithEmailAndPassword(email: email, password: password)).user!;
+            if (user != null) {
+              return true;
+            }
       } else {
         res = "Please enter all the fields";
       }
@@ -82,30 +71,37 @@ class AuthMethods {
   }
 
   Future<void> signOut() async{
-    _auth.signOut();
-  }
-
-
-
-  Future<void> addUserDetails(String name, String gender, String dateOfBirth,  Uint8List file) async {
     try {
-      if(name.isNotEmpty || gender.isNotEmpty || dateOfBirth.isNotEmpty) {
-        String detailsId = const Uuid().v1();
-        String profileImage = await Storage().uploadImageToStorage("profilePics", file);
-        await firebaseFirestore.collection("users").doc(userId).collection("user details").doc(detailsId).set({
-          "name": name,
-          "dateOfBirth": dateOfBirth,
-          "gender": gender,
-          "profilePics": profileImage,
-        });
-      } else {
-        print("Fill up the required fields");
-      }
+      await HelperFunctions.saveUserLoggedInStatus(false);
+      await HelperFunctions.saveUserEmailSF("");
+      await HelperFunctions.saveUserNameSF("");
+      await _auth.signOut();
     } catch (e) {
-      print(
-        e.toString(),
-      );
+      return null;
     }
   }
+
+
+
+  // Future<void> joinHome(String uid, String homeid) async {
+  //   try {
+  //     DocumentSnapshot snap = await firebaseFirestore.collection("homes").doc(homeid).get();
+  //      List users = (snap.data()! as dynamic)["users"];
+  //
+  //      // to remove the user if he is already a member
+  //      if(users.contains(uid)) {
+  //        await firebaseFirestore.collection("homes").doc(homeid).update({
+  //          "users": FieldValue.arrayRemove([uid])
+  //        });
+  //      } else {
+  //        // To add the user to an home
+  //        await firebaseFirestore.collection("homes").doc(homeid).update({
+  //          "users": FieldValue.arrayUnion([uid])
+  //        });
+  //      }
+  //   } catch(e) {
+  //     log(e.toString());
+  //   }
+  // }
 }
 

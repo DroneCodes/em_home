@@ -38,6 +38,8 @@ dependencies:
   flutter_facebook_auth: '^4.0.1'
   provider: ^6.0.3
   uuid: ^3.0.5
+  # firebase_messaging: ^13.1.0
+  shared_preferences: ^2.0.15
   flutter:
     sdk: flutter
 

@@ -18,15 +18,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider(),),
-      ],
-      child: const MaterialApp(
+    return const MaterialApp(
         title: 'EMHome',
         debugShowCheckedModeBanner: false,
         home: SplashScreen(),
-      ),
     );
   }
 }
