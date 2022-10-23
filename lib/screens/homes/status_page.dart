@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:em_home/screens/homes/home_info.dart';
 import 'package:em_home/utils/colors.dart';
 import 'package:em_home/utils/custom_route.dart';
+import 'package:em_home/widgets/home_members.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../methods/database_service.dart';
@@ -10,12 +12,12 @@ class StatusPage extends StatefulWidget {
   final String homeId;
   final String homeName;
   final String userName;
-  const StatusPage(
-      {Key? key,
-      required this.homeId,
-      required this.homeName,
-      required this.userName,})
-      : super(key: key);
+  const StatusPage({
+    Key? key,
+    required this.homeId,
+    required this.homeName,
+    required this.userName,
+  }) : super(key: key);
 
   @override
   State<StatusPage> createState() => _StatusPageState();
@@ -25,6 +27,7 @@ class _StatusPageState extends State<StatusPage> {
   Stream<QuerySnapshot>? status;
   TextEditingController statusController = TextEditingController();
   String admin = "";
+  Stream? members;
 
   @override
   void initState() {
@@ -44,10 +47,24 @@ class _StatusPageState extends State<StatusPage> {
       });
     });
   }
+  String getName(String r) {
+    return r.substring(r.indexOf("_") + 1);
+  }
+
+  getMembers() async {
+    DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getHomeMembers(widget.homeId)
+        .then((val) {
+      setState(() {
+        members = val;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         foregroundColor: backgroundColor,
         centerTitle: true,
@@ -72,7 +89,7 @@ class _StatusPageState extends State<StatusPage> {
       body: Stack(
         children: <Widget>[
           // chat messages here
-          statusMessages(),
+          homeMembers(),
           Container(
             alignment: Alignment.bottomCenter,
             width: MediaQuery.of(context).size.width,
@@ -138,6 +155,95 @@ class _StatusPageState extends State<StatusPage> {
             : Container();
       },
     );
+  }
+
+  homeMembers() {
+    return StreamBuilder(
+        stream: members, builder: (context, AsyncSnapshot snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data['members'] != null) {
+          if (snapshot.data['members'].length != 0) {
+            return ListView.builder(
+              itemCount: snapshot.data['members'].length,
+              itemBuilder: (context, index) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        height: 6,
+                        color: Colors.green,
+                        width: 20,
+                      ),
+
+                      const SizedBox(
+                        width: 20,
+                      ),
+
+                      Container (
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        color: Colors.white,
+                        height: 350,
+                        child: Row(
+                          children: [
+                            Column(
+                              children: [
+                                Container(
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(70),
+                                  ),
+                                  child: Image.asset(
+                                    snapshot.data['members']['profilePic'],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(getName(snapshot.data['members'][index]), style: const TextStyle(color: Color.fromRGBO(0, 0, 0, 0.46), fontSize: 10),),
+                              ],
+                            ),
+
+                            const SizedBox(
+                              width: 15,
+                            ),
+
+                            Column(
+                              children: [
+                                const Text("Status", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
+
+                                const SizedBox(
+                                  height: 5,
+                                ),
+
+                                Text(snapshot.data.docs[index]['status'], style: const TextStyle(fontStyle: FontStyle.italic, color: Color.fromRGBO(0, 0, 0, 0.46),),)
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        } else {
+          return const CircularProgressIndicator();
+        }
+      }else {
+        return const CircularProgressIndicator();
+      }
+    });
   }
 
   sendStatus() {

@@ -17,7 +17,7 @@ class DatabaseService {
       .collection("homes");
 
   // saving userData
-  Future updateUserData(String name, String email, String password, String gender, String dob, String file) async {
+  Future updateUserData(String name, String email, String password, String gender, DateTime dob, String file) async {
     return await userCollection.doc(uid).set({
       'fullName': name,
       'email': email,

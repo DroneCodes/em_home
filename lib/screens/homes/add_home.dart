@@ -4,6 +4,8 @@ import 'package:em_home/screens/homes/search_page.dart';
 import 'package:em_home/utils/custom_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../methods/database_service.dart';
 import '../../methods/helper_functions.dart';
@@ -26,6 +28,8 @@ class _HomesPageState extends State<HomesPage> {
   bool _isLoading = false;
   String homeName = "";
   String address = "";
+  String? _currentAddress;
+  Position? _currentPosition;
 
   @override
   void initState() {
@@ -149,24 +153,18 @@ class _HomesPageState extends State<HomesPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  TextField(
-                    onChanged: (val) {
-                      setState(() {
-                        address = val;
-                      });
-                    },
-                    style: const TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: backgroundColor),
-                          borderRadius: BorderRadius.circular(20)),
-                      errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.red),
-                          borderRadius: BorderRadius.circular(20)),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: backgroundColor),
-                          borderRadius: BorderRadius.circular(20)),
-                      hintText: "Name of Home",
+                  GestureDetector(
+                    onTap: _getCurrentPosition,
+                    child: Container(
+                      child: Row(
+                        children: const [
+                          Icon(Icons.location_on_outlined),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Home Location",),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -188,7 +186,7 @@ class _HomesPageState extends State<HomesPage> {
                       DatabaseService(
                               uid: FirebaseAuth.instance.currentUser!.uid)
                           .createHome(userName, homeName,
-                              FirebaseAuth.instance.currentUser!.uid, address)
+                              FirebaseAuth.instance.currentUser!.uid, _currentAddress!)
                           .whenComplete(() {
                         _isLoading = false;
                       });
@@ -271,4 +269,59 @@ class _HomesPageState extends State<HomesPage> {
       ),
     );
   }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _getCurrentPosition() async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      setState(() => _currentPosition = position);
+      _getAddressFromLatLng(_currentPosition!);
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+
+  Future<void> _getAddressFromLatLng(Position position) async {
+    await placemarkFromCoordinates(
+        _currentPosition!.latitude, _currentPosition!.longitude)
+        .then((List<Placemark> placemarks) {
+      Placemark place = placemarks[0];
+      setState(() {
+        _currentAddress =
+        '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
+      });
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
 }
+

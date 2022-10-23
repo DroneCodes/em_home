@@ -11,9 +11,7 @@ import '../../methods/helper_functions.dart';
 import '../../utils/colors.dart';
 import '../../widgets/text_field.dart';
 
-enum Gender {
-  male, female
-}
+enum Gender { male, female }
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -33,7 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String email = "";
   String password = "";
   String fullName = "";
-  String dob = "";
+  DateTime dateTime = DateTime(2022, 12, 14);
   Gender? gender = Gender.male;
   AuthMethods authMethods = AuthMethods();
   Uint8List? image;
@@ -56,20 +54,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-
   signUp() async {
     if (formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
-      await authMethods.registerUser(email: email, password: password, name: fullName, gender: gender.toString(), dateOfBirth: dob, file: image!,)
-      .then((value) async {
+      await authMethods
+          .registerUser(
+        email: email,
+        password: password,
+        name: fullName,
+        gender: gender.toString(),
+        dateOfBirth: dateTime,
+        file: image!,
+      )
+          .then((value) async {
         if (value == true) {
           await HelperFunctions.saveUserLoggedInStatus(true);
           await HelperFunctions.saveUserEmailSF(email);
           await HelperFunctions.saveUserNameSF(fullName);
 
-          Navigator.pushReplacement(context, SlideLeftRoute(widget: const LoginScreen()));
+          Navigator.pushReplacement(
+              context, SlideLeftRoute(widget: const LoginScreen()));
         } else {
           showSnackBar(value, context);
           setState(() {
@@ -123,7 +129,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const Text(
                   "Create your account",
-                  style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+                  style:
+                      TextStyle(color: textColor, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 30,
@@ -133,15 +140,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // to check if Image is not equal to null
                     image != null
                         ? CircleAvatar(
-                      radius: 64,
-                      backgroundImage: MemoryImage(image!),
-                    )
+                            radius: 64,
+                            backgroundImage: MemoryImage(image!),
+                          )
                         : const CircleAvatar(
-                      radius: 64,
-                      backgroundImage: AssetImage(
-                        "assets/default_profile.jpg",
-                      ),
-                    ),
+                            radius: 64,
+                            backgroundImage: AssetImage(
+                              "assets/default_profile.jpg",
+                            ),
+                          ),
                     Positioned(
                       child: IconButton(
                         onPressed: selectImage,
@@ -170,8 +177,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // check tha validation
                   validator: (val) {
                     return RegExp(
-                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        .hasMatch(val!)
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(val!)
                         ? null
                         : "Please enter a valid email";
                   },
@@ -224,18 +231,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                TextFormField(
-                  decoration: textInputDecoration.copyWith(
-                      labelText: "Date Of Birth DD/MM/YYYY",
-                      prefixIcon: Icon(
-                        Icons.calendar_month,
-                      )),
-                  validator: (val) {},
-                  onChanged: (val) {
+                GestureDetector(
+                  onTap: () async {
+                    DateTime? newDate = await showDatePicker(
+                        context: context,
+                        initialDate: dateTime,
+                        firstDate: DateTime(1980),
+                        lastDate: DateTime(2023));
+
+                    // if Cancel is selected
+                    if(newDate == null) return;
+
+                    // if Ok is selected
                     setState(() {
-                      dob = val;
+                      dateTime = newDate;
                     });
                   },
+                  child: Container(
+                    height: 45,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.white, width: 2
+                        )
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.calendar_month),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("Pick Date of Birth",
+                            style: TextStyle(color: Colors.black)),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
@@ -245,8 +274,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     genderDialog(context);
                   },
                   child: Container(
-                    child: Icon(
-                      Icons.person
+                    height: 45,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Colors.white, width: 2
+                      )
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.person),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Gender",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -294,7 +338,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, CustomRoute(widget: const Scaffold(body: Center(child: Text("Coming Soon"),))));
+                        Navigator.push(
+                            context,
+                            CustomRoute(
+                                widget: const Scaffold(
+                                    body: Center(
+                              child: Text("Coming Soon"),
+                            ))));
                       },
                       child: Container(
                         width: 50,
@@ -308,7 +358,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, CustomRoute(widget: const Scaffold(body: Center(child: Text("Coming Soon"),))));
+                        Navigator.push(
+                            context,
+                            CustomRoute(
+                                widget: const Scaffold(
+                                    body: Center(
+                              child: Text("Coming Soon"),
+                            ))));
                       },
                       child: Container(
                         width: 50,
@@ -328,45 +384,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   genderDialog(BuildContext context) {
-    showDialog(context: context, builder: (context) {
-      return StatefulBuilder(builder: (((context, setState) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                title: const Text("Female"),
-                leading: Radio<Gender>(
-                  value: Gender.female,
-                  groupValue: gender,
-                  onChanged: (Gender? value) {
-                    setState(() {
-                      gender = value;
-                    });
-                  },
-                ),
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (((context, setState) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    title: const Text("Female"),
+                    leading: Radio<Gender>(
+                      value: Gender.female,
+                      groupValue: gender,
+                      onChanged: (Gender? value) {
+                        setState(() {
+                          gender = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ListTile(
+                    title: const Text("Male"),
+                    leading: Radio<Gender>(
+                      value: Gender.male,
+                      groupValue: gender,
+                      onChanged: (Gender? value) {
+                        setState(() {
+                          gender = value;
+                        });
+                      },
+                    ),
+                  )
+                ],
               ),
-
-              const SizedBox(
-                height: 10,
-              ),
-
-              ListTile(
-                title: const Text("Male"),
-                leading: Radio<Gender>(
-                  value: Gender.male,
-                  groupValue: gender,
-                  onChanged: (Gender? value) {
-                    setState(() {
-                      gender = value;
-                    });
-                  },
-                ),
-              )
-            ],
-          ),
-        );
-      })));
-    });
+            );
+          })));
+        });
   }
 }
