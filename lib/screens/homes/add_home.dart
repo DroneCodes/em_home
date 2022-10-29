@@ -153,18 +153,25 @@ class _HomesPageState extends State<HomesPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  GestureDetector(
-                    onTap: _getCurrentPosition,
-                    child: Container(
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: backgroundColor, width: 1
+                        ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: GestureDetector(
+                      onTap: _getCurrentPosition,
                       child: Row(
-                        children: const [
-                          Icon(Icons.location_on_outlined),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text("Home Location",),
-                        ],
-                      ),
+                          children: const [
+                            Icon(Icons.location_on_outlined),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("Home Location",),
+                          ],
+                        ),
                     ),
                   ),
                 ],
